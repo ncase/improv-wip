@@ -4,13 +4,13 @@ var Sim = {
 		num: 100,	
 		actions:[
 			
-			/*{ type:"move", amount:7 },
+			{ type:"move", amount:7 },
 			{ type:"steer", direction:"t", target:"m", turn:5 },
 			{ type:"if_close", target:"m", radius:200,
 				actions:[
 					{ type:"steer", direction:"a", target:"m", turn:10 }
 				]
-			}*/
+			}
 
 		]
 	}

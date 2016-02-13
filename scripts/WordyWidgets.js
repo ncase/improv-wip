@@ -187,11 +187,39 @@ Wordy.widgets.ACTIONS = function(obj,path,args){
 
 	// Help func to add editor to list, WITH WORDY.EDIT()
 	var addEditorToList = function(actionOption){
-		var action = Wordy.getActionByID(actionOption.type);
-		var dom = Wordy.edit(actionOption, action.editor); // edits itself
+
+		// List element
 		var li = document.createElement("li");
 		list.appendChild(li);
+
+		// The action's editor
+		var action = Wordy.getActionByID(actionOption.type);
+		var dom = Wordy.edit(actionOption, action.editor);
 		li.appendChild(dom);
+
+		// The delete button
+		var deleteButton = document.createElement("div");
+		deleteButton.className = "wordy_delete_button";
+		deleteButton.innerHTML = "⨂";
+		deleteButton.onmouseover = function(){
+			li.style.textDecoration = "line-through";
+		};
+		deleteButton.onmouseout = function(){
+			li.style.textDecoration = null;
+		};
+		deleteButton.onclick = function(){
+
+			// Remove from array
+			var index = actionOptions.indexOf(actionOption);
+			if(index<0) console.error("deleting an action that doesn't exist?!?!");
+			actionOptions.splice(index,1);
+
+			// Remove from this UI
+			list.removeChild(li);
+
+		};
+		li.appendChild(deleteButton);
+
 	};
 
 	// Populate it with those actions + Wordy.edit()
@@ -237,7 +265,6 @@ Wordy.widgets.ACTIONS = function(obj,path,args){
 		actionOptions.push(actionOption);
 
 		// New action added to list, using Wordy.edit
-		debugger;
 		addEditorToList(actionOption);
 
 		// reset the select DOM

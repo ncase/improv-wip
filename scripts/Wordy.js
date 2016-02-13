@@ -33,7 +33,7 @@ Wordy.edit = function(object,html){
 			dom = document.querySelector(html);
 			html = dom.innerHTML; // it was a query selector
 		}else{
-			dom = document.createElement("div");
+			dom = document.createElement("span");
 			html = html; // it was plain html code, make a DOM.
 		}
 	}else{
@@ -157,12 +157,19 @@ Wordy.setProperty = function(obj,path,value){
 	// update path.
 	// update path.prop
 	// update path.prop.name
+	Wordy.publishUpdate(path);
+
+};
+// TODO - does NOT help with recursive objects,
+// because they may have the same path in different objects
+Wordy.publishUpdate = function(path){
+	console.log(path);
+	var pathSplit = path.split(".");
 	var message = "update";
 	for(var i=0;i<pathSplit.length;i++){
 		message += " "+pathSplit[i];
 		MPS.publish(message);
 	}
-
 };
 
 /************

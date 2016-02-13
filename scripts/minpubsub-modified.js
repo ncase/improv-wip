@@ -102,6 +102,7 @@
     context.clear = MinPubSub.clear;*/
 
     context.MPS = MinPubSub;
+    context.MinPubSub = MinPubSub;
 
   }
 

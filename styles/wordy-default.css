@@ -1,17 +1,26 @@
+/* Scrubbing Numbers */
 .wordy_scrub{
 	font-weight: bold;
 	border-bottom: 1px dashed #000;
 	cursor: col-resize;
 }
+
+/* Lists, yo. */
 .wordy_list{
 	margin: 0;
 	padding-left: 40px;
+	position: relative;
 }
-.wordy_list ol{ list-style-type: lower-alpha; }
-.wordy_list ol ol{ list-style-type: lower-roman; }
 .wordy_list li{
 	margin-bottom: 10px;
+	position: relative;
 }
+
+/* Lists inside yo lists, yo. */
+.wordy_list ol{ list-style-type: lower-alpha; }
+.wordy_list ol ol{ list-style-type: lower-roman; }
+
+/* The "+new" button actually has a hidden <select> thing */
 .wordy_list_new{
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -37,3 +46,22 @@
 	opacity: 0;
 	cursor: pointer;
 }
+
+
+/* The delete button */
+.wordy_delete_button{
+	
+	position: absolute;
+    left: -50px;
+    top: 4px;
+
+	width: 1.2em;
+    height: 1em;
+    line-height: 1em;
+    text-align: center;
+
+	color:#bbb;
+	cursor: pointer;
+
+}
+
