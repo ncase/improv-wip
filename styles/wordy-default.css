@@ -1,0 +1,39 @@
+.wordy_scrub{
+	font-weight: bold;
+	border-bottom: 1px dashed #000;
+	cursor: col-resize;
+}
+.wordy_list{
+	margin: 0;
+	padding-left: 40px;
+}
+.wordy_list ol{ list-style-type: lower-alpha; }
+.wordy_list ol ol{ list-style-type: lower-roman; }
+.wordy_list li{
+	margin-bottom: 10px;
+}
+.wordy_list_new{
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left:20px;
+	position: relative;
+	height: 25px;
+}
+.wordy_list_new > div{
+	position: absolute;
+	width: 50px;
+	height: 20px;
+	font-size: 16px;
+	border: 1px solid #bbb;
+	border-radius: 10px;
+	text-align: center;
+	color: #aaa;
+	line-height: 20px;
+}
+.wordy_list_new > select{
+	width: 52px;
+	font-size: 500px;
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+}

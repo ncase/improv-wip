@@ -1,0 +1,50 @@
+<!doctype>
+<html>
+<head>
+	<title>hOI!</title>
+	<link rel="stylesheet" type="text/css" href="styles/wordy.css">
+	<style>
+	body{
+		margin:0;
+		font-family: Helvetica, Arial, sans-serif;
+		font-weight: 100;
+		font-size: 20px;
+		line-height: 1.4em;
+	}
+	#howdy{
+		box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+		margin: 20px;
+	}
+	#instructions{
+		position:absolute; 
+		top:0; right:0;
+		width:300px; 
+		margin: 20px;
+	}
+	</style>
+</head>
+<body>
+
+<div id="howdy"></div>
+
+<div id="instructions">
+Make me
+{NUMBER width: min=0,max=500}
+pixels wide, and
+{NUMBER height: min=0,max=500}
+pixels tall.
+And while you're at it, color me
+{CHOOSE color: red,orange,yellow,green,blue,purple,black,white}
+as well?
+</div>
+
+</body>
+</html>
+
+<script src="scripts/Wordy.js"></script>
+<script src="scripts/WordyWidgets.js"></script>
+
+<script src="test0.js"></script>
+<script>
+Wordy.edit(data,"#instructions"); // Yeah, that's it.
+</script>
