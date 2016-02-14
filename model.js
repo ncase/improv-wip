@@ -8,7 +8,7 @@ var Sim = {
 /////////////
 
 // MOVE FORWARD
-Wordy.actions.move = {
+Improv.actions.move = {
 	label: "Move forward...",
 	editor: "Move forward {NUMBER amount: max=50,min=0,default=10} pixels.",
 	act: function(boid,options){
@@ -17,7 +17,7 @@ Wordy.actions.move = {
 };
 
 // STEER TOWARDS/AWAY FROM...
-Wordy.actions.steer = {
+Improv.actions.steer = {
 	label: "Steer towards/away from...",
 	editor: "Steer {CHOOSE direction: t=towards,a=away from} "+
 			"{CHOOSE target: m=the mouse,c=the closest boid,f=the boids in front of me} "+
@@ -44,7 +44,7 @@ Wordy.actions.steer = {
 };
 
 // IF I'M CLOSE TO...
-Wordy.actions.if_close = {
+Improv.actions.if_close = {
 	label: "If close to...",
 	editor: "If I'm within {NUMBER radius: min=0,max=500} pixels of "+
 			"{CHOOSE target: m=the mouse,b=another boid}...<br>"+
@@ -67,13 +67,13 @@ Wordy.actions.if_close = {
 		if(distSquared>radiusSquared) return; // nope, I'm not
 
 		// But if I am...
-		Wordy.act(boid, options.actions);
+		Improv.act(boid, options.actions);
 
 	}
 };
 
 // TURN LEFT/RIGHT...
-Wordy.actions.turn = {
+Improv.actions.turn = {
 	label: "Turn left/right...",
 	editor: "Turn {CHOOSE direction: left,right} by {NUMBER amount: min=0,max=10} degrees.",
 	act: function(boid,options){

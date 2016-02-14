@@ -1,34 +1,34 @@
 /* Scrubbing Numbers */
-.wordy_scrub{
+.improv_scrub{
 	font-weight: bold;
 	border-bottom: 1px dashed #000;
 	cursor: col-resize;
 }
 
 /* Lists, yo. */
-.wordy_list{
+.improv_list{
 	margin: 0;
 	padding-left: 40px;
 	position: relative;
 }
-.wordy_list li{
+.improv_list li{
 	margin-bottom: 10px;
 	position: relative;
 }
 
 /* Lists inside yo lists, yo. */
-.wordy_list ol{ list-style-type: lower-alpha; }
-.wordy_list ol ol{ list-style-type: lower-roman; }
+.improv_list ol{ list-style-type: lower-alpha; }
+.improv_list ol ol{ list-style-type: lower-roman; }
 
 /* The "+new" button actually has a hidden <select> thing */
-.wordy_list_new{
+.improv_list_new{
 	margin-top: 5px;
 	margin-bottom: 5px;
 	margin-left:20px;
 	position: relative;
 	height: 25px;
 }
-.wordy_list_new > div{
+.improv_list_new > div{
 	position: absolute;
 	width: 50px;
 	height: 20px;
@@ -39,7 +39,7 @@
 	color: #aaa;
 	line-height: 20px;
 }
-.wordy_list_new > select{
+.improv_list_new > select{
 	width: 52px;
 	font-size: 500px;
 	position: absolute;
@@ -49,7 +49,7 @@
 
 
 /* The delete button */
-.wordy_delete_button{
+.improv_delete_button{
 	
 	position: absolute;
     left: -50px;

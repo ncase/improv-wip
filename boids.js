@@ -157,7 +157,7 @@ setInterval(function(){
 	// Act on, and draw, each boid
 	for(var i=0;i<boids.length;i++){
 		var boid = boids[i];
-		Wordy.act(boid, Sim.model.actions);
+		Improv.act(boid, Sim.model.actions);
 		boid.draw();
 	}
 

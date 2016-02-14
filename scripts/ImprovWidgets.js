@@ -1,7 +1,7 @@
 (function(exports){
 
 // SCRUBBABLE NUMBER
-Wordy.widgets.NUMBER = function(obj,path,args){
+Improv.widgets.NUMBER = function(obj,path,args){
 
 	// Args: min, max, [step=1], [default=null]
 	var values = args.split(",");
@@ -16,7 +16,7 @@ Wordy.widgets.NUMBER = function(obj,path,args){
 	var defaultVal = argsObject.default;
 
 	// Initial value (if no initial value, make it between min & max)
-	var initialValue = Wordy.getProperty(obj,path);
+	var initialValue = Improv.getProperty(obj,path);
 	if(initialValue===undefined){
 		if(defaultVal){
 			initialValue=defaultVal;
@@ -28,7 +28,7 @@ Wordy.widgets.NUMBER = function(obj,path,args){
 
 	// Create scrub number, with init value
 	var scrub = document.createElement("span");
-	scrub.className = "wordy_scrub";
+	scrub.className = "improv_scrub";
 	scrub.innerHTML = initialValue;
 
 	// When you change the number
@@ -42,7 +42,7 @@ Wordy.widgets.NUMBER = function(obj,path,args){
 		value = parseFloat(value);
 
 		// Make data & html change
-		Wordy.setProperty(obj,path,value);
+		Improv.setProperty(obj,path,value);
 		scrub.innerHTML = value;
 
 	};
@@ -51,7 +51,7 @@ Wordy.widgets.NUMBER = function(obj,path,args){
 	scrub.addEventListener("mousedown",function(event){
 
 		// Initial
-		var initValue = Wordy.getProperty(obj,path);
+		var initValue = Improv.getProperty(obj,path);
 		var initX = event.clientX;
 
 		// Cursor!
@@ -97,10 +97,10 @@ Wordy.widgets.NUMBER = function(obj,path,args){
 };
 
 // SELECT LIST
-Wordy.widgets.CHOOSE = function(obj,path,args){
+Improv.widgets.CHOOSE = function(obj,path,args){
 
 	// Initial value
-	var initialValue = Wordy.getProperty(obj,path);
+	var initialValue = Improv.getProperty(obj,path);
 
 	// Create options
 	// (a separate label & value is optional.)
@@ -128,7 +128,7 @@ Wordy.widgets.CHOOSE = function(obj,path,args){
 	// Set data when you make a selection
 	selectDOM.onchange = function(){
 		var value = selectDOM.value;
-		Wordy.setProperty(obj,path,value);
+		Improv.setProperty(obj,path,value);
 	};
 
 	// Update, juuuuust in case.
@@ -162,16 +162,16 @@ var _createSelect = function(options, selectedValue){
 };
 
 // ACTIONS - THIS ONE'S GONNA BE A DOOZY
-Wordy.widgets.ACTIONS = function(obj,path,args){
+Improv.widgets.ACTIONS = function(obj,path,args){
 
 	// The default would just be... an empty array, I s'pose.
 	
 	// Initial value (also, there should be no args???)
-	var actionOptions = Wordy.getProperty(obj,path);
+	var actionOptions = Improv.getProperty(obj,path);
 	// if no array, create an empty one.
 	if(!actionOptions){
 		actionOptions = [];
-		Wordy.setProperty(obj,path,actionOptions);
+		Improv.setProperty(obj,path,actionOptions);
 	}
 
 	// Create a div.
@@ -182,7 +182,7 @@ Wordy.widgets.ACTIONS = function(obj,path,args){
 	/////////////////////
 
 	var list = document.createElement("ol");
-	list.className = "wordy_list";
+	list.className = "improv_list";
 	actionsDOM.appendChild(list);
 
 	// Help func to add editor to list, WITH WORDY.EDIT()
@@ -193,13 +193,13 @@ Wordy.widgets.ACTIONS = function(obj,path,args){
 		list.appendChild(li);
 
 		// The action's editor
-		var action = Wordy.getActionByID(actionOption.type);
-		var dom = Wordy.edit(actionOption, action.editor);
+		var action = Improv.getActionByID(actionOption.type);
+		var dom = Improv.edit(actionOption, action.editor);
 		li.appendChild(dom);
 
 		// The delete button
 		var deleteButton = document.createElement("div");
-		deleteButton.className = "wordy_delete_button";
+		deleteButton.className = "improv_delete_button";
 		deleteButton.innerHTML = "⨂";
 		deleteButton.onmouseover = function(){
 			li.style.textDecoration = "line-through";
@@ -222,7 +222,7 @@ Wordy.widgets.ACTIONS = function(obj,path,args){
 
 	};
 
-	// Populate it with those actions + Wordy.edit()
+	// Populate it with those actions + Improv.edit()
 	for(var i=0;i<actionOptions.length;i++){
 		addEditorToList(actionOptions[i]);
 	}
@@ -232,7 +232,7 @@ Wordy.widgets.ACTIONS = function(obj,path,args){
 	//////////////////////////////////
 
 	var newButtonContainer = document.createElement("div");
-	newButtonContainer.className = "wordy_list_new";
+	newButtonContainer.className = "improv_list_new";
 	actionsDOM.appendChild(newButtonContainer);
 
 	// The button itself
@@ -245,9 +245,9 @@ Wordy.widgets.ACTIONS = function(obj,path,args){
 		label: "+new",
 		value: null
 	}];
-	for(var actionID in Wordy.actions){
+	for(var actionID in Improv.actions){
 		options.push({
-			label: Wordy.actions[actionID].label,
+			label: Improv.actions[actionID].label,
 			value: actionID
 		});
 	}
@@ -264,7 +264,7 @@ Wordy.widgets.ACTIONS = function(obj,path,args){
 		var actionOption = { type:value }; // default action of that type
 		actionOptions.push(actionOption);
 
-		// New action added to list, using Wordy.edit
+		// New action added to list, using Improv.edit
 		addEditorToList(actionOption);
 
 		// reset the select DOM

@@ -1,14 +1,14 @@
 (function(exports){
 
 // SINGLETON
-var Wordy = {};
-exports.Wordy = Wordy;
-Wordy.widgets = {};
-Wordy.actions = {};
+var Improv = {};
+exports.Improv = Improv;
+Improv.widgets = {};
+Improv.actions = {};
 
 /************
 
-Wordy.edit(object,html);
+Improv.edit(object,html);
 
 Create an editor for an object, given some HTML.
 object = an object, duh.
@@ -19,7 +19,7 @@ html = you can pass html code directly,
 Returns a new created DOM, or the DOM you passed.
 
 ************/
-Wordy.edit = function(object,html){
+Improv.edit = function(object,html){
 
 	// Get the html content
 	var dom;
@@ -62,7 +62,7 @@ Wordy.edit = function(object,html){
 			node.innerHTML = config;
 		}else{
 			// ODD - it's a Widget to edit the OBJECT
-			node = Wordy.makeWidget(object,config);
+			node = Improv.makeWidget(object,config);
 		}
 
 		// Append that shtuff
@@ -77,7 +77,7 @@ Wordy.edit = function(object,html){
 
 /************
 
-Wordy.makeWidget(object,config);
+Improv.makeWidget(object,config);
 
 Create a widget from a string-config of this form:
 "TYPE prop.path.name: args"
@@ -90,7 +90,7 @@ function(obj,path,args){
 
 ************/
 
-Wordy.makeWidget = function(object, config){
+Improv.makeWidget = function(object, config){
 
 	// Parse config into widgetType, objectPath, args...
 	var split = config.split(" ");
@@ -114,7 +114,7 @@ Wordy.makeWidget = function(object, config){
 	}
 
 	// Get the widget-making function
-	var widgetFunc = Wordy.widgets[widgetType];
+	var widgetFunc = Improv.widgets[widgetType];
 
 	// Create the widget!
 	var node = widgetFunc(object, objectPath, args);
@@ -126,7 +126,7 @@ Wordy.makeWidget = function(object, config){
 
 // Helpers to get & set properties given an object + path.prop.name
 // (also, minpubsub it out)
-Wordy.getProperty = function(obj,path){
+Improv.getProperty = function(obj,path){
 
 	// Get it
 	var pathSplit = path.split(".");
@@ -138,7 +138,7 @@ Wordy.getProperty = function(obj,path){
 	return value;
 
 };
-Wordy.setProperty = function(obj,path,value){
+Improv.setProperty = function(obj,path,value){
 
 	// Set it
 	var pathSplit = path.split(".");
@@ -157,12 +157,12 @@ Wordy.setProperty = function(obj,path,value){
 	// update path.
 	// update path.prop
 	// update path.prop.name
-	Wordy.publishUpdate(path);
+	Improv.publishUpdate(path);
 
 };
 // TODO - does NOT help with recursive objects,
 // because they may have the same path in different objects
-Wordy.publishUpdate = function(path){
+Improv.publishUpdate = function(path){
 	var pathSplit = path.split(".");
 	var message = "update";
 	for(var i=0;i<pathSplit.length;i++){
@@ -173,7 +173,7 @@ Wordy.publishUpdate = function(path){
 
 /************
 
-Wordy.act(object,actionOptions);
+Improv.act(object,actionOptions);
 
 Go through each actionOption, recursively if you have to,
 and for each actionOption...
@@ -183,16 +183,16 @@ and for each actionOption...
 
 ************/
 
-Wordy.getActionByID = function(id){
-	return Wordy.actions[id];
+Improv.getActionByID = function(id){
+	return Improv.actions[id];
 };
-Wordy.act = function(object,actionOptions){
+Improv.act = function(object,actionOptions){
 
 	for(var i=0;i<actionOptions.length;i++){
 
 		// Got the "act" func
 		var actionOption = actionOptions[i];
-		var action = Wordy.getActionByID(actionOption.type);
+		var action = Improv.getActionByID(actionOption.type);
 		var act = action.act;
 
 		// Apply it!
