@@ -8,17 +8,18 @@
 		margin:0;
 		font-family: Helvetica, Arial, sans-serif;
 		font-weight: 100;
-		font-size: 20px;
+		font-size: 18px;
 		line-height: 1.4em;
 	}
 	#model{
 		width:100%;
 		height: 100%;
+		position: fixed;
 	}
 	#instructions{
 		position:absolute; 
 		top:0; right:0;
-		width:400px; min-height:calc(100% - 40px);
+		width:300px; min-height:calc(100% - 40px);
 		padding: 20px;
 		background: rgba(255,255,255,0.9);
 	}
@@ -29,8 +30,8 @@
 <svg id="model"></svg>
 
 <div id="instructions">
-First, let's put down {NUMBER num: min=0,max=100} boids.
-Every "tick", each boid follows these instructions:
+Let's make {NUMBER num: min=0,max=100} boids.
+Every "tick", each boid does the following:
 <br><br>
 {ACTIONS actions}
 </div>
@@ -49,7 +50,7 @@ Every "tick", each boid follows these instructions:
 
 <!-- Test -->
 <script src="boids.js"></script>
-<script src="test1.js"></script>
+<script src="model.js"></script>
 <script>
 Wordy.edit(Sim.model,"#instructions"); // Yeah, that's it.
 </script>

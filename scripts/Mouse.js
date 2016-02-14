@@ -21,7 +21,7 @@
 
 	document.body.addEventListener("mousemove",onMouseMove = function(e){
 		Mouse.x = e.pageX;
-		Mouse.y = e.pageY;
+		Mouse.y = e.pageY-window.scrollY;
 	},false);
 
 })(window);

@@ -62,7 +62,7 @@ Wordy.widgets.NUMBER = function(obj,path,args){
 
 			// Calculate & update new value
 			var currX = e.clientX;
-			var delta = Math.round((currX-initX)/5)*step; // one "step" per 5px
+			var delta = Math.round((currX-initX)/2)*step; // one "step" per 2px
 			var newValue = initValue + delta;
 			updateValue(newValue);
 

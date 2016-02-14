@@ -1,19 +1,6 @@
 // SIM MODEL
 var Sim = {
-	model: {
-		num: 100,	
-		actions:[
-			
-			{ type:"move", amount:7 },
-			{ type:"steer", direction:"t", target:"m", turn:5 },
-			{ type:"if_close", target:"m", radius:200,
-				actions:[
-					{ type:"steer", direction:"a", target:"m", turn:10 }
-				]
-			}
-
-		]
-	}
+	model: {"num":100,"actions":[{"type":"move","amount":5},{"type":"steer","direction":"t","target":"f","turn":5},{"type":"if_close","radius":20,"target":"b","actions":[{"type":"steer","direction":"a","target":"c","turn":10}]}]}
 };
 
 /////////////

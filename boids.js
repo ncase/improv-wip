@@ -47,12 +47,14 @@ function Boid(config){
 		-15,-10
 	]).attr({
 		fill: "#333344"
+		//fill: Snap.hsl2rgb(Math.random(), 0.7, 0.7)
 	});
 
 	self.draw = function(){
 		var matrix = new Snap.Matrix();
 		matrix.translate(self.x,self.y);
 		matrix.rotate(self.rotation,0,0);
+		matrix.scale(0.8);
 		self.graphics.attr({transform:matrix});
 	};
 	self.draw();

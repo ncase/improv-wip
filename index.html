@@ -1,0 +1,103 @@
+<!doctype>
+<html>
+<head>
+	
+	<!-- Meta -->
+	<title>National Data Shtuff</title>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<!--link rel="icon" type="image/png" href="/favicon.png"-->
+
+	<!-- Styles -->
+	<link rel="stylesheet" type="text/css" href="styles/index.css">
+	<link href='https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy' rel='stylesheet' type='text/css'>
+
+</head>
+<body>
+<div id="content">
+
+<div class="words" style="margin-bottom:45px">
+	<div id="title">
+		<span style="letter-spacing: -15px;">W</span>ord<span style="letter-spacing: -10px;">y</span>.
+	</div>
+	<div id="subtitle">a tool to make tools to make explorable explanations</div>
+</div>
+
+<div style="overflow:hidden;">
+	<div style="width:220px; height:30px; float:left">
+		<b>Wordy</b> turns writing...
+	</div>
+	<div style="width:720px; height:30px; float:right">
+		...into something your readers can <i>play</i> with:
+	</div>
+	<div style="width:220px; height:300px; float:left;">
+		<div class="textbox" style="width:178px; height:258px;">
+			Let's create
+			{NUMBER count: min=0,max=50}
+			<br>
+			boids. Make 'em
+			<br>
+			{CHOOSE color: black,red,blue,<br>random colors}
+			<br>
+			too, why not?
+		</div>
+	</div>
+	<div style="width:720px; height:300px; float:right; background:#cc2727">
+	</div>
+</div>
+
+<div class="words">
+
+	<p>
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	</p>
+	<p>
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	</p>
+	<p>
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	blah blah blah blah blah blah blah blah 
+	</p>
+
+</div>
+
+<div style="font-size:14px; overflow:hidden">
+
+	<div class="textbox" style="width:450px; padding:10px; float:left; margin-bottom:20px">
+	Move forward {NUMBER amount: max=50,min=0,default=10} pixels.
+	</div>
+
+	<div class="textbox" style="width:450px; padding:10px; float:right; margin-bottom:20">
+	Turn {CHOOSE direction: left,right}
+	<br>
+	by {NUMBER amount: min=0,max=10} degrees.
+	</div>
+
+	<div class="textbox" style="width:450px; padding:10px; float:left">
+	Steer {CHOOSE direction: towards,away from}
+	<br>
+	{CHOOSE target: the mouse,the closest boid,the boids in front of me}
+	<br>
+	by {NUMBER turn: min=0,max=10} degrees
+	</div>
+
+	<div class="textbox" style="width:450px; padding:10px; float:right">
+	If I'm within {NUMBER radius: min=0,max=500} pixels of
+	<br>
+	{CHOOSE target: m=the mouse,b=another boid}...
+	{ACTIONS actions}
+	</div>
+
+</div>
+
+</div>
+</body>
+</html>

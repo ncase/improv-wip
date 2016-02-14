@@ -1,0 +1,36 @@
+body{
+	margin:0;
+
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: 100;
+	font-size: 21px;
+
+	background: #fff;
+}
+#content{
+	width: 960px;
+	margin: 50px auto;
+}
+.words{
+	width:600px;
+	margin: 35px 0;
+}
+
+#title{
+	font-size: 100px;
+    position: relative;
+    left: -35px;
+    font-family: 'Sorts Mill Goudy';
+    height: 120px;
+}
+#subtitle{
+	font-size: 25px;
+}
+.textbox{
+	padding:20px; border:1px solid #bbb;
+	font-family:'Sorts Mill Goudy';
+}
+
+b{
+	font-weight:bold;
+}

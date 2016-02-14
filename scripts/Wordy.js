@@ -163,7 +163,6 @@ Wordy.setProperty = function(obj,path,value){
 // TODO - does NOT help with recursive objects,
 // because they may have the same path in different objects
 Wordy.publishUpdate = function(path){
-	console.log(path);
 	var pathSplit = path.split(".");
 	var message = "update";
 	for(var i=0;i<pathSplit.length;i++){
