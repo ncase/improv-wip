@@ -124,53 +124,6 @@ Improv.makeWidget = function(object, config){
 
 };
 
-// Helpers to get & set properties given an object + path.prop.name
-// (also, minpubsub it out)
-Improv.getProperty = function(obj,path){
-
-	// Get it
-	var pathSplit = path.split(".");
-	var value = obj;
-	for(var i=0;i<pathSplit.length;i++){
-		var name = pathSplit[i];
-		value = value[name];
-	}
-	return value;
-
-};
-Improv.setProperty = function(obj,path,value){
-
-	// Set it
-	var pathSplit = path.split(".");
-	for(var i=0;i<pathSplit.length-1;i++){
-		var name = pathSplit[i];
-		obj = obj[name];
-	}
-	var lastPropName = pathSplit[pathSplit.length-1];
-
-	// Does it actually change?
-	var prevValue = obj[lastPropName];
-	if(obj[lastPropName]==value) return; // If not, stop here.
-	obj[lastPropName] = value;
-
-	// Then, minpubsub everything on the path. Example:
-	// update path.
-	// update path.prop
-	// update path.prop.name
-	Improv.publishUpdate(path);
-
-};
-// TODO - does NOT help with recursive objects,
-// because they may have the same path in different objects
-Improv.publishUpdate = function(path){
-	var pathSplit = path.split(".");
-	var message = "update";
-	for(var i=0;i<pathSplit.length;i++){
-		message += " "+pathSplit[i];
-		MPS.publish(message);
-	}
-};
-
 /************
 
 Improv.act(object,actionOptions);
@@ -200,6 +153,98 @@ Improv.act = function(object,actionOptions){
 
 	}
 
+};
+
+
+/************
+
+Improv.getProperty(object,path);
+Improv.setProperty(object,path,value);
+Improv.listen(object,path,callback);
+Improv.unlisten(handler);
+
+For all your getting & setting needs
+
+************/
+
+Improv.getProperty = function(obj,path){
+
+	// Get it
+	var pathSplit = path.split(".");
+	var value = obj;
+	for(var i=0;i<pathSplit.length;i++){
+		var name = pathSplit[i];
+		value = value[name];
+	}
+	return value;
+
+};
+
+Improv.setProperty = function(obj,path,value){
+
+	// Set it
+	var pathSplit = path.split(".");
+	for(var i=0;i<pathSplit.length-1;i++){
+		var name = pathSplit[i];
+		obj = obj[name];
+	}
+	var lastPropName = pathSplit[pathSplit.length-1];
+
+	// Does it actually change?
+	var prevValue = obj[lastPropName];
+	if(obj[lastPropName]==value) return; // If not, stop here.
+	obj[lastPropName] = value;
+
+	// Call all listeners on the way up.
+	// update path.prop.name
+	// update path.prop
+	// update path
+	for(var i=pathSplit.length;i>0;i--){
+
+		// Sub path
+		var subPath = pathSplit.slice(0,i).join(".");
+
+		// If there's a listener, call it with the new value
+		var callback = Improv._getListenerCallback(obj,subPath);
+		if(callback){
+			callback(value);
+		}
+
+	}
+
+};
+
+Improv._listeners = [];
+
+Improv._getListenerCallback = function(obj,path){
+	for(var i=0;i<Improv._listeners.length;i++){
+		var listener = Improv._listeners[i];
+		if(listener.obj==obj && listener.path==path){
+			return listener.callback;
+		}
+	}
+	return null;
+};
+
+Improv.listen = function(obj, path, callback){
+
+	// Add listener
+	var listener = {
+		obj: obj,
+		path: path,
+		callback: callback
+	};
+	Improv._listeners.push(listener);
+
+	// Return it, too.
+	return listener;
+
+};
+
+Improv.unlisten = function(handler){
+	var index = Improv._listeners.indexOf(handler);
+	if(index<0) throw "trying to un-listen to what was never listened";
+	Improv._listeners.splice(index,1);
 };
 
 

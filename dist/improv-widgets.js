@@ -4,7 +4,7 @@
 Improv.widgets.NUMBER = function(obj,path,args){
 
 	// Args: min, max, [step=1], [default=null]
-	var values = args.split(",");
+	var values = args.split(/,\s|,/); // to allow for "a,b,c" and "a, b, c"
 	var argsObject = {};
 	for(var i=0;i<values.length;i++){
 		var keyvalue = values[i].split("=");
@@ -106,7 +106,7 @@ Improv.widgets.CHOOSE = function(obj,path,args){
 	// (a separate label & value is optional.)
 	// (by default, label = value)
 	var value, label;
-	var options = args.split(",");
+	var options = args.split(/,\s|,/); // to allow for "a,b,c" and "a, b, c"
 	for(var i=0;i<options.length;i++){
 		var split = options[i].split("=");
 		if(split.length==1){
@@ -211,7 +211,7 @@ Improv.widgets.ACTIONS = function(obj,path,args){
 
 			// Remove from array
 			var index = actionOptions.indexOf(actionOption);
-			if(index<0) console.error("deleting an action that doesn't exist?!?!");
+			if(index<0) throw "deleting an action that doesn't exist?!?!";
 			actionOptions.splice(index,1);
 
 			// Remove from this UI
