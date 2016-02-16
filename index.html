@@ -3,100 +3,118 @@
 <head>
 	
 	<!-- Meta -->
-	<title>National Data Shtuff</title>
+	<title>Improv.js</title>
 	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 	<meta content="utf-8" http-equiv="encoding">
 	<!--link rel="icon" type="image/png" href="/favicon.png"-->
 
 	<!-- Styles -->
 	<link rel="stylesheet" type="text/css" href="styles/index.css">
-	<link href='https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy' rel='stylesheet' type='text/css'>
 
 </head>
 <body>
 <div id="content">
 
-<div class="words" style="margin-bottom:45px">
-	<div id="title">
-		<span style="letter-spacing: -15px;">W</span>ord<span style="letter-spacing: -10px;">y</span>.
-	</div>
-	<div id="subtitle">a tool to make tools to make explorable explanations</div>
-</div>
+<h1 style="margin-bottom:0px">Improv.js <span style="font-weight:100; font-size:0.8em">[WIP]<span></h1>
+<p>a tool to make tools to make <a href="http://explorableexplanations.com/">explorable explanations</a></p>
 
-<div style="overflow:hidden;">
-	<div style="width:220px; height:30px; float:left">
-		<b>Improv</b> turns writing...
-	</div>
-	<div style="width:720px; height:30px; float:right">
-		...into something your readers can <i>play</i> with:
-	</div>
-	<div style="width:220px; height:300px; float:left;">
-		<div class="textbox" style="width:178px; height:258px;">
-			Let's create
-			{NUMBER count: min=0,max=50}
-			<br>
-			boids. Make 'em
-			<br>
-			{CHOOSE color: black,red,blue,<br>random colors}
-			<br>
-			too, why not?
-		</div>
-	</div>
-	<div style="width:720px; height:300px; float:right; background:#cc2727">
-	</div>
-</div>
+<hr/>
 
-<div class="words">
+<p>Let's say you have a model of a complex system.
+And you want others to be able to play around with it, explore the system, change its rules, maybe even create their <em>own</em> models with it! Well, that's an incredibly specific goal to have, but hey, you're in luck.</p>
 
-	<p>
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	</p>
-	<p>
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	</p>
-	<p>
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	blah blah blah blah blah blah blah blah 
-	</p>
+<p><strong>Improv</strong> lets you write normal words in html like this...</p>
 
-</div>
+<pre><code>&lt;div id="instructions"&gt;
+A "boid" is like a bird, but worse.
+Let's make {NUMBER count: min=0,max=100} boids,
+and paint 'em all {CHOOSE color: black, red, blue, random colors}!
+&lt;/div&gt;
+</code></pre>
 
-<div style="font-size:14px; overflow:hidden">
+<p>then somewhere in the code, you call this...</p>
 
-	<div class="textbox" style="width:450px; padding:10px; float:left; margin-bottom:20px">
-	Move forward {NUMBER amount: max=50,min=0,default=10} pixels.
-	</div>
+<pre><code>Improv.edit(your_model_data,"#instructions");
+</code></pre>
 
-	<div class="textbox" style="width:450px; padding:10px; float:right; margin-bottom:20">
-	Turn {CHOOSE direction: left,right}
-	<br>
-	by {NUMBER amount: min=0,max=10} degrees.
-	</div>
+<p>and that'll give you something like this!</p>
 
-	<div class="textbox" style="width:450px; padding:10px; float:left">
-	Steer {CHOOSE direction: towards,away from}
-	<br>
-	{CHOOSE target: the mouse,the closest boid,the boids in front of me}
-	<br>
-	by {NUMBER turn: min=0,max=10} degrees
-	</div>
+<!--iframe src="model.html" class="feature" width="960" height="320">
+</iframe-->
 
-	<div class="textbox" style="width:450px; padding:10px; float:right">
-	If I'm within {NUMBER radius: min=0,max=500} pixels of
-	<br>
-	{CHOOSE target: m=the mouse,b=another boid}...
-	{ACTIONS actions}
-	</div>
+<p>But wait, there's more!
+Besides sliding numbers and selecting from dropdowns,
+Improv also has the ability to let your readers "re-program" the system itself, without having to touch the messy code itself, and without fear of breaking everything.</p>
 
-</div>
+<p>Here's how. Again, you start with writing html normally like this:</p>
+
+<pre><code>&lt;div id="instructions"&gt;
+Let's make {NUMBER count: min=0,max=100} boids,
+and paint 'em all {CHOOSE color: black, red, blue, random colors}!
+
+Also, every "tick", each boid will do the following:
+{ACTIONS actions}
+&lt;/div&gt;
+</code></pre>
+
+<p>Notice the <code>{ACTIONS actions}</code> at the end. That's where your reader will get to live-edit the behavior of the system! Somewhere else, you have to define what "actions" an object in your system can do, and what parameters can be changed. Like so:</p>
+
+<pre><code>Improv.actions.move = {
+    short: "Move forward...",
+    editor: "Move forward by {NUMBER amount: min=0,max=50} pixels",
+    act: function(boid,options){
+        // code to make the boid move by [options.amount] pixels
+    }
+};
+</code></pre>
+
+<p>Here's another one:</p>
+
+<pre><code>Improv.actions.if_close = {
+    short: "If close to...",
+    editor: "If I'm within {NUMBER radius: min=0,max=500} pixels of "+
+             "{CHOOSE target: the mouse, another boid}, then..."+
+             "{ACTIONS actions}",
+    act: function(boid,options){
+        // code using options.radius, options.target &amp; options.actions
+    }
+};
+</code></pre>
+
+<p>Notice <code>{ACTIONS actions}</code> is there <em>again.</em>
+This lets your reader make sub-actions for that action! Like my mama always said, recursion is its own reward.
+Finally, all that will give you something like this:</p>
+
+<!--iframe src="model2.html" class="feature" width="960" height="640">
+</iframe-->
+
+<p>Now you can make all kinds of flocks! But while boids are cool, <del>they aren't very useful.</del> (actually, <a href="https://en.wikipedia.org/wiki/Boids">boids</a> are often used in game AI, movie CGI, and swarm robotics. If I extended this demo a bit more, maybe I could create a pretty useful, designer-friendly boid "scripting" tool???)</p>
+
+<p>Luckily, because Improv is <em>independent</em> of the kind of model you give it, both authors and readers can use Improv to live-edit all kinds of things! Such as:</p>
+
+<ul>
+<li><strong>Simulation:</strong> agent-based models, cellular automata, complex networks, markov chains, stock-and-flow models, mathematical models</li>
+<li><strong>Journalism:</strong> interactive data visualizations</li>
+<li><strong>Education:</strong> learning about systems, learning programming (as a way of thinking, not rote-memorizing syntax)</li>
+<li><strong>Misc Cool Stuff:</strong> design tools for videogames, procedural art</li>
+</ul>
+
+<p>Whatever it is, I'm excited to see what <em>you</em> can make with Improv. This tool, that makes tools, that make explorable explanations... that can make us into more active learners, more critical thinkers, better citizens of our shared world.</p>
+
+<hr />
+
+<h3>TO DO:</h3>
+
+<ul>
+<li><strong>Actually make tools with this.</strong>  <br/>
+I mean, that's the whole reason I made this, because it was getting tedious re-implementing the same "live editing" features over and over again. (I'm personally most interested in using Improv to make a tool to simulate complex networks, and agent-based models)</li>
+<li><strong>Support for variables &amp; objects.</strong> <br/>
+Once Improv can do variables, <em>then</em> it'll have real power. I'm thinking specifically of Complex Adaptive Systems – CAS need agents with varying properties, hence, it needs variables.</li>
+<li><strong>More Widgets.</strong>  <br/>
+Right now, the only "Widgets" are NUMBER, CHOOSE, and ACTIONS. It could use more. What about free-form text? What about graphical widgets, like a bell-curve-manipulator to choose your own probability distribution? Or what about <em>output</em> widgets, like graphs to show the state of the system?</li>
+</ul>
+
+</body>
 
 </div>
 </body>

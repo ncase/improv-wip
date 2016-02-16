@@ -10,6 +10,7 @@
 	margin: 0;
 	padding-left: 40px;
 	position: relative;
+	margin-top: 1.5em;
 }
 .improv_list li{
 	margin-bottom: 10px;
@@ -17,6 +18,7 @@
 }
 
 /* Lists inside yo lists, yo. */
+.improv_list ol{ margin-top: 0; }
 .improv_list ol{ list-style-type: lower-alpha; }
 .improv_list ol ol{ list-style-type: lower-roman; }
 

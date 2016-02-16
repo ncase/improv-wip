@@ -19,7 +19,7 @@
 	#instructions{
 		position:absolute; 
 		top:0; left:0;
-		width: 260px;
+		width:300px; min-height:calc(100% - 40px);
 		padding: 20px;
 		background: rgba(255,255,255,0.9);
 	}
@@ -30,9 +30,11 @@
 <svg id="model"></svg>
 
 <div id="instructions">
-A "boid" is like a bird, but worse.
 Let's make {NUMBER count: min=0,max=100} boids,
 and paint 'em all {CHOOSE color: black, red, blue, random colors}!
+
+Also, every "tick", each boid will do the following:
+{ACTIONS actions}
 </div>
 
 </body>
@@ -53,7 +55,7 @@ and paint 'em all {CHOOSE color: black, red, blue, random colors}!
 <script>
 // SIM MODEL
 var Sim = {
-	model: {"num":100,"actions":[{"type":"move","amount":5},{"type":"steer","direction":"t","target":"f","turn":5},{"type":"if_close","radius":20,"target":"b","actions":[{"type":"steer","direction":"a","target":"c","turn":10}]}]}
+	model: {"num":100,"actions":[{"type":"move","amount":5},{"type":"steer","direction":"t","target":"m","turn":5},{"type":"if_close","radius":200,"target":"m","actions":[{"type":"steer","direction":"a","target":"m","turn":10}]}]}
 };
-Improv.edit(Sim.model,"#instructions");
+Improv.edit(Sim.model,"#instructions"); // Yeah, that's it.
 </script>

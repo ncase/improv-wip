@@ -3,34 +3,39 @@ body{
 
 	font-family: Helvetica, Arial, sans-serif;
 	font-weight: 100;
-	font-size: 21px;
+	font-size: 20px;
+	line-height: 1.4em;
 
 	background: #fff;
 }
+
 #content{
-	width: 960px;
-	margin: 50px auto;
-}
-.words{
-	width:600px;
-	margin: 35px 0;
+	width:640px;
+	margin: 80px auto;
+	text-align: justify;
 }
 
-#title{
-	font-size: 100px;
+.feature{
+    width: 960px;
     position: relative;
-    left: -35px;
-    font-family: 'Sorts Mill Goudy';
-    height: 120px;
-}
-#subtitle{
-	font-size: 25px;
-}
-.textbox{
-	padding:20px; border:1px solid #bbb;
-	font-family:'Sorts Mill Goudy';
+    left: -160px;
 }
 
-b{
-	font-weight:bold;
+iframe.feature{
+    border:1px solid #ddd;
+}
+
+pre{
+	background: #333;
+    color: #fff;
+    padding: 15px;
+    font-size: 14px;
+    width: 610px;
+    border-radius: 10px;
+    line-height: 1.3em;
+}
+
+hr{
+	border:none;
+	border-bottom: 3px dashed #ddd;
 }
