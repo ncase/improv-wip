@@ -40,3 +40,28 @@ hr{
 	border:none;
 	border-bottom: 3px dashed #ddd;
 }
+
+.button{
+	text-decoration: none;
+}
+.button > div{
+	margin-top: 20px;
+    padding: 15px 25px;
+    color: #ddd;
+    background: #444;
+    border-radius: 10px;
+    font-size: 30px;
+    display: inline-block;
+    position: relative;
+    top:0px;
+
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+
+}
+.button:hover > div{
+	background: #666;
+	top:-3px;
+}
