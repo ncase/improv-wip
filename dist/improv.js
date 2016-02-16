@@ -182,6 +182,8 @@ Improv.getProperty = function(obj,path){
 
 Improv.setProperty = function(obj,path,value){
 
+	var originalObject = obj;
+
 	// Set it
 	var pathSplit = path.split(".");
 	for(var i=0;i<pathSplit.length-1;i++){
@@ -199,13 +201,13 @@ Improv.setProperty = function(obj,path,value){
 	// update path.prop.name
 	// update path.prop
 	// update path
-	for(var i=pathSplit.length;i>0;i--){
+	for(var i=pathSplit.length;i>=0;i--){
 
 		// Sub path
 		var subPath = pathSplit.slice(0,i).join(".");
 
 		// If there's a listener, call it with the new value
-		var callback = Improv._getListenerCallback(obj,subPath);
+		var callback = Improv._getListenerCallback(originalObject,subPath);
 		if(callback){
 			callback(value);
 		}
@@ -227,6 +229,12 @@ Improv._getListenerCallback = function(obj,path){
 };
 
 Improv.listen = function(obj, path, callback){
+
+	// If only two params (obj, callback), path is ""
+	if(!callback){
+		callback = path;
+		path = "";
+	}
 
 	// Add listener
 	var listener = {
