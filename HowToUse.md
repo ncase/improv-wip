@@ -1,5 +1,16 @@
 #An Incredibly Incomplete API
 
+##Installing Improv.js
+
+It's just two scripts:
+
+	<script src="improv.js"></script>
+	<script src="improv-widgets.js"></script>
+
+And one default style:
+
+    <link rel="stylesheet" type="text/css" href="improv-default.css">
+
 ##The Markup
 
 You know that game, Mad Libs? Where you get a story, and have to fill-in-the-blanks with a noun, or adverb, or something or other? Improv.js is kinda like that. Improv's markup goes like this:
@@ -46,11 +57,9 @@ You get something your reader can use, to *re-program your model!* so cool~
 
 (takes no options)
 
-##Actually Friggin' USING Improv.js
+##Actually Using Improv.js
 
-For this example, I'll be using the [Most Basic Demo](http://ncase.me/improv-wip/demos/basic/basic.html).
-
-First, you need an HTML element somewhere containing the markup you want to become interactive. Remember to give it an ID.
+This next example comes from [Most Basic Demo](http://ncase.me/improv-wip/demos/basic/basic.html). First, you need an HTML element somewhere containing the markup you want to become interactive. Remember to give it an ID.
 
     <div id="editor">
 	Let's make our box
@@ -68,9 +77,7 @@ I guess you'd want some actual data you can edit, too.
 
 Then, call Improv.edit to use your HTML to edit your data!
 
-    <script>
     Improv.edit(data,"#editor");
-    </script>
     
 And if you want, you can also listen to if the data's been changed. Here, if any part of the data's changed, we re-render the box:
 
