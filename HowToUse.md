@@ -1,4 +1,4 @@
-#An Incredibly Incomplete API
+#An Incredibly Incomplete Documentation
 
 ##Installing Improv.js
 
@@ -103,6 +103,6 @@ Special case for the ACTIONS widget. When you want the user's "programming" to r
 		
 	},1000/30);
 	
-Okay, that's it. That's the API so far.
+Okay, that's it. Them's the docs so far.
 
 good luck
