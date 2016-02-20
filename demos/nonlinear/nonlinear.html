@@ -7,8 +7,11 @@
 <body>
 
 <div id="editor">
-Do the math:
+Let's start off with these numbers:
 {ACTIONS math}
+
+<br><br>
+Then every cycle, do this:
 </div>
 
 <hr>
@@ -66,7 +69,6 @@ var logic = {
 	math:[
 		{ type:"set_num", _set_:"AAA", value:2 },
 		{ type:"set_num", _set_:"BBB", value:3 },
-		{ type:"set_num", _set_:{_ref_:"BBB"}, value:100 },
 		{ type:"add_num", _set_:"CCC", op:"+", a:{_get_:"AAA"}, b:{_get_:"BBB"} },
 		{ type:"print", value:{_get_:"CCC"} }
 	]

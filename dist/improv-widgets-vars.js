@@ -42,73 +42,232 @@ Improv.widgets.VAR = function(obj,path,args){
 	var type = argsObject.type;
 	var name = argsObject.name;
 
-	// What's the ID?!
-	var varID = Improv.getProperty(obj,path);
+	// Create container
+	var container2 = document.createElement("span");
+	container2.className = "improv_inline";
+	var container = document.createElement("span");
+	container.className = "improv_inline";
+	container2.appendChild(container);
 
-	// If there is no ID, THEN IT'S TIME TO CREATE A NEW ONE!
-	if(!varID){
+	// Is this a reference?
+	var _isRef = function(){
+		var value = Improv.getProperty(obj,path);
+		return (value && value._ref_!==undefined); // value exists, and it's a _ref_!
+	};
 
-		// Set locally
-		varID = Improv.generateUID();
+	//////////////////////
+	// CREATE NEW VAR ////
+	//////////////////////
 
-		// Set in logic model
-		Improv.root._vars_.push({
-			id: varID,
-			type: type,
-			name: name
+	var _createNewVarUI = function(){
+
+		// What's the ID?!
+		var varID = Improv.getProperty(obj,path);
+
+		// If there is no ID, THEN IT'S TIME TO CREATE A NEW ONE!
+		if(!varID){
+
+			// Set locally
+			varID = Improv.generateUID();
+
+			// Set in logic model
+			Improv.root._vars_.push({
+				id: varID,
+				type: type,
+				name: name
+			});
+
+			// Set in action options
+			Improv.setProperty(obj,"_set_",varID);
+
+		}
+
+		// Getter & Setter for the NAME.
+		var getVarName = function(){
+			return Improv.getVarByID(Improv.root, varID).name;
+		};
+		var setVarName = function(value){
+			Improv.getVarByID(Improv.root, varID).name = value;
+			Improv.message(Improv.root, "_vars_", value);
+		};
+
+		// Initial value, default
+		var initialValue = getVarName();
+		if(!initialValue) initialValue=name;
+
+		// Create input text
+		var text = _getFreeformText();
+		text.value = initialValue;
+
+		// On Change
+		var _changeStyle = text.oninput;
+		text.oninput = function(){
+			_changeStyle();
+			setVarName(text.value);
+		};
+		text.oninput();
+
+		// Return dom
+		return text;
+
+	};
+
+	//////////////////////
+	// REFERENCE TO VAR //
+	//////////////////////
+
+	var listener = null;
+
+	var _createReferenceUI = function(){
+
+		// Get options
+		var _getOptions = function(){
+			var optionsRaw = Improv.getVarsByType(Improv.root, type);
+			var options = [];
+			for(var i=0;i<optionsRaw.length;i++){
+				var o = optionsRaw[i];
+				options.push({
+					label: o.name,
+					value: o.id
+				});
+			}
+			return options;
+		};
+
+		// Initial value
+		var initialValue = Improv.getProperty(obj,path)._ref_;
+
+		// Create choose select	
+		var refSelect = _createSelect(_getOptions(), initialValue);
+		container.appendChild(refSelect);
+
+		// Set data when you make a selection
+		refSelect.onchange = function(){
+			Improv.setProperty(obj,path,{
+				_ref_: refSelect.value
+			});
+		};
+
+		// Listen to changes in _vars_ list
+		listener = Improv.listen(Improv.root, "_vars_", function(value){
+
+			var options = _getOptions();
+			if(options.length==0){
+
+				// FORCE OVER TO NEW VAR
+				Improv.setProperty(obj,"_set_",null);
+				updateInterface();
+
+			}else{
+
+				// Update as per normal
+				var currentValue = refSelect.value;
+				_createSelect(refSelect, _getOptions(), currentValue); // Rebuild list
+				refSelect.onchange();
+
+			}
+
 		});
 
-		// Set in action options
-		Improv.setProperty(obj,"_set_",varID);
+		// Bah
+		refSelect.onchange();
 
+		// Return DOM
+		return refSelect;
+
+	};
+
+	//////////////////////
+	// MORE (...) ////////
+	//////////////////////
+
+	// Create (...)
+	var more = document.createElement("span");
+	more.className = "improv_more";
+	more.innerHTML = "⋯";
+	container2.appendChild(more);
+	more.onclick = function(){
+		var value;
+		if(_isRef()){
+			_dieReference(); // KILL IT
+			value = null;
+		}else{
+			_dieNewVar(); // KILL IT
+			value={_ref_:""};
+		}
+		Improv.setProperty(obj,path,value);
+		updateInterface();
 	}
 
-	// Getter & Setter for the NAME.
-	var getVarName = function(){
-		return Improv.getVarByID(Improv.root, varID).name;
-	};
-	var setVarName = function(value){
-		Improv.getVarByID(Improv.root, varID).name = value;
-		Improv.message(Improv.root, "_vars_", value);
-	};
+	//////////////////////
+	// WHICH ONE IS IT ///
+	//////////////////////
 
-	// Initial value, default
-	var initialValue = getVarName();
-	if(!initialValue) initialValue=name;
+	var updateInterface = function(){
 
-	// Create input text
-	var text = _getFreeformText();
-	text.value = initialValue;
+		// CLEAR EVERYTHING
+		container.innerHTML = "";
+		if(listener){
+			Improv.unlisten(listener);
+			listener = null;
+		}
 
-	// On Change
-	var _changeStyle = text.oninput;
-	text.oninput = function(){
-		_changeStyle();
-		setVarName(text.value);
-	};
-	text.oninput();
+		// Reference or not???
+		if(_isRef()){
+			
+			// IT'S A REFERENCE
+			var oldRef = _createReferenceUI();
+			container.appendChild(oldRef);
+
+		}else{
+
+			// IT'S A NEW VAR - Create UI
+			var newVar = _createNewVarUI();
+			container.appendChild(newVar);
+
+		}
+
+	};	
+
+	updateInterface();
 
 	//////////////////////
 	// DIE ///////////////
 	//////////////////////
 
-	text.die = function(){
-		
-		// Delete in logic model
+	var _dieNewVar = function(){
+
+		// It was a new var - delete it!
+		var varID = Improv.getProperty(obj,path);
 		var _var_ = Improv.getVarByID(Improv.root, varID);
 		var index = Improv.root._vars_.indexOf(_var_);
 		Improv.root._vars_.splice(index,1);
 
-		// HACK TODO - later, when you can make this var just set a previous one,
-		// NOT creating a new one????
-
-		// Tell peeps it's gone now
+		// Stuff's been changed, yo.
 		Improv.message(Improv.root, "_vars_");
 
 	};
 
+	var _dieReference = function(){
+		if(listener){
+			Improv.unlisten(listener);
+			listener = null;
+		}
+	};
+
+	container2.die = function(){
+		
+		// It was a new var - kill it!
+		if(!_isRef()) _dieNewVar();
+
+		// Should only be listening if it was a reference,
+		// but juuuuust in case...
+		_dieReference();
+
+	};
+
 	// Return input
-	return text;
+	return container2;
 
 }
 
@@ -177,19 +336,11 @@ Improv.widgets.NUM = function(obj,path,args){
 		});
 	};
 
-	// Thirty times a second, update options IF anything's changed.
-	// Listen to changes
+	// Listen to changes in _vars_ list
 	var listener = Improv.listen(Improv.root, "_vars_", function(value){
-
-		// Current value
 		var currentValue = getterInput.value;
-
-		// Rebuild list
-		_createSelect(getterInput, _getOptions(), currentValue);
-
-		// Update Interface
+		_createSelect(getterInput, _getOptions(), currentValue); // Rebuild list
 		updateInterface();
-
 	});
 
 	//////////////////////

@@ -174,16 +174,21 @@ Improv.act = function(object,actionOptions){
 		var act = action.act;
 
 		// _VARS_
-		// If it's a _get_, change it whatever
+		// If it's a _get_ or _ref_, change it whatever
 		for(var propName in actionOption){
 			var prop = actionOption[propName];
+
+			// _get_: Get it from the runtime object
 			if(prop._get_){
-				
-				// Get it from the runtime object
 				var value = object[prop._get_];
 				actionOption[propName] = value;
-
 			}
+
+			// _ref_: Just hand over the _ref_
+			if(prop._ref_){
+				actionOption[propName] = prop._ref_;
+			}
+
 		}
 
 		// Apply it!
