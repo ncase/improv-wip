@@ -44,6 +44,9 @@ Improv.edit = function(object,html){
 	// Clear current DOM
 	dom.innerHTML = "";
 
+	// Style that DOM
+	dom.className = "improv";
+
 	// Okay... Parsing this...
 	// Split on {blah blah blah}, and keep the insides of those.
 	var split = html.split(/\{([^{}]*)\}/);
@@ -147,6 +150,15 @@ Improv.act = function(object,actionOptions){
 		var actionOption = actionOptions[i];
 		var action = Improv.getActionByID(actionOption.type);
 		var act = action.act;
+
+		// References
+		actionOption = JSON.parse(JSON.stringify(actionOption));
+		for(var propName in actionOption){
+			var prop = actionOption[propName];
+			if(prop.ref){
+				actionOption[propName] = Improv.getProperty(object,prop.ref);
+			}
+		}
 
 		// Apply it!
 		act(object,actionOption);
@@ -253,6 +265,35 @@ Improv.unlisten = function(handler){
 	var index = Improv._listeners.indexOf(handler);
 	if(index<0) throw "trying to un-listen to what was never listened";
 	Improv._listeners.splice(index,1);
+};
+
+
+/************
+
+Improv.getReferences(object,group);
+
+************/
+
+Improv.getReferences = function(actionOptions,group){
+
+	// List of refs.
+	var refs = [];
+
+	// Go through each action.
+	for(var i=0;i<actionOptions.length;i++){
+		var actionOption = actionOptions[i];
+		var action = Improv.getActionByID(actionOption.type);
+
+		// If this sets a reference of the right group...
+		if(action.reference==group){
+			refs.push(actionOption.ref);
+		}
+
+	}
+
+	// Return list of names
+	return refs;
+
 };
 
 

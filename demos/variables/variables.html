@@ -1,0 +1,88 @@
+<!doctype>
+<html>
+<head>
+	<title>variables!</title>
+	<link rel="stylesheet" type="text/css" href="../../dist/improv-default.css">
+</head>
+<body>
+
+<div id="editor">
+Do dis:
+{ACTIONS steps}
+</div>
+
+<div id="output"></div>
+
+</body>
+</html>
+
+<!-- IMPROV.JS -->
+<script src="../../dist/improv.js"></script>
+<script src="../../dist/improv-widgets.js"></script>
+<script src="../../dist/improv-widgets-vars.js"></script>
+
+<!-- Test -->
+<script>
+
+// LOGIC STEPS
+Improv.actions.set_num = {
+	reference: "number",
+	label: "Remember a number...",
+	editor: "Remember {TEXT ref} is {NUM value}",
+	act:function(workspace,o){
+		workspace[o.ref] = o.value;
+	}
+};
+
+Improv.actions.do_math = {
+	reference: "number",
+	label: "Do math to two numbers...",
+	// later - do math to two numbers
+	// maybe MORE????? but how. "value[]" as a propname?
+	editor: "Remember {TEXT ref} is {NUM a} "+
+			"{CHOOSE op: +,-,×,÷} "+
+			"{NUM b}",
+	act:function(workspace,o){
+		var val;
+		switch(o.op){
+			case "+": val=o.a+o.b; break;
+			case "-": val=o.a-o.b; break;
+			case "×": val=o.a*o.b; break;
+			case "÷": val=o.a/o.b; break;
+		}
+		workspace[o.ref] = val;
+	}
+};
+
+Improv.actions.print_num = {
+	label: "Print number...",
+	editor: "Print {NUM value}",
+	act:function(workspace,o){
+		output.innerHTML += o.value+"<br>";
+	}
+};
+
+// Math steps
+var model = {
+	steps: [
+		{ type:"set_num", ref:"apples", value:2 },
+		/*{ type:"set_num", ref:"oranges", value:3 },
+		{ type:"do_math", ref:"fruits", op:"plus", a:{ref:"apples"}, b:{ref:"oranges"} },
+		{ type:"print_num", value:{ref:"fruits"} },*/
+	]
+};
+
+// Logic loop!
+var workspace;
+var output = document.getElementById("output");
+setInterval(function(){
+	workspace = {};
+	output.innerHTML = "";
+	Improv.act(workspace, model.steps);
+},1000/30);
+
+// Improv, edit!
+Improv.root = model.steps; // HACK.
+Improv.edit(model,"#editor");
+
+</script>

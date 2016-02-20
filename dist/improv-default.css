@@ -1,3 +1,10 @@
+/* The full editor */
+.improv{
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: 100;
+	font-size: 15px;
+}
+
 /* Scrubbing Numbers */
 .improv_scrub{
 	font-weight: bold;
@@ -49,7 +56,6 @@
 	cursor: pointer;
 }
 
-
 /* The delete button */
 .improv_delete_button{
 	
@@ -67,3 +73,15 @@
 
 }
 
+/* Freeform text */
+.improv_inline{
+	display: inline-block;
+}
+.improv_text{
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: 100;
+	font-size: 15px;
+}
+.improv_more{
+	cursor: pointer;
+}

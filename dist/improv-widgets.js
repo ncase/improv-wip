@@ -147,11 +147,25 @@ var _createSelect = function(options, selectedValue){
 
 		var o = options[i];
 
+		// If o has no label/value, they're the same then
+		var label,value;
+		if(o.label){
+			label = o.label;
+			value = o.value;
+		}else{
+			label = o;
+			value = o;
+		}
+
 		// Create option
 		var optionDOM = document.createElement("option");
-		optionDOM.innerHTML = o.label;
-		optionDOM.setAttribute("value",o.value);
-		if(o.value==selectedValue) optionDOM.setAttribute("selected","true");
+		optionDOM.innerHTML = label;
+		optionDOM.setAttribute("value",value);
+		if(selectedValue){
+			if(o.value==selectedValue) optionDOM.setAttribute("selected","true");
+		}else if(i==0){
+			optionDOM.setAttribute("selected","true");
+		}
 		selectDOM.appendChild(optionDOM);
 
 	}
@@ -160,6 +174,7 @@ var _createSelect = function(options, selectedValue){
 	return selectDOM;
 
 };
+window._createSelect = _createSelect; // HACK TODO
 
 // ACTIONS - THIS ONE'S GONNA BE A DOOZY
 Improv.widgets.ACTIONS = function(obj,path,args){
