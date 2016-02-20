@@ -4,9 +4,10 @@
 Improv.widgets.NUMBER = function(obj,path,args){
 
 	// Args: min, max, [step=1], [default=null]
+	var values = args.split(/,\s|,/); // to allow for "a,b,c" and "a, b, c"
 	var argsObject = {};
-	for(var i=0;i<args.length;i++){
-		var keyvalue = args[i].split("=");
+	for(var i=0;i<values.length;i++){
+		var keyvalue = values[i].split("=");
 		argsObject[keyvalue[0]] = parseFloat(keyvalue[1]);
 	}
 	var min = argsObject.min;
@@ -105,9 +106,9 @@ Improv.widgets.CHOOSE = function(obj,path,args){
 	// (a separate label & value is optional.)
 	// (by default, label = value)
 	var value, label;
-	var options = [];
-	for(var i=0;i<args.length;i++){
-		var split = args[i].split("=");
+	var options = args.split(/,\s|,/); // to allow for "a,b,c" and "a, b, c"
+	for(var i=0;i<options.length;i++){
+		var split = options[i].split("=");
 		if(split.length==1){
 			value = split[0];
 			label = split[0];
@@ -115,10 +116,10 @@ Improv.widgets.CHOOSE = function(obj,path,args){
 			value = split[0];
 			label = split[1];
 		}
-		options.push({
+		options[i] = {
 			value: value,
 			label: label
-		});
+		};
 	}
 
 	// Create <select> with all options (select initial value)
@@ -146,10 +147,20 @@ var _createSelect = function(options, selectedValue){
 
 		var o = options[i];
 
+		// If o has no label/value, they're the same then
+		var label,value;
+		if(o.label){
+			label = o.label;
+			value = o.value;
+		}else{
+			label = o;
+			value = o;
+		}
+
 		// Create option
 		var optionDOM = document.createElement("option");
-		optionDOM.innerHTML = o.label;
-		optionDOM.setAttribute("value",o.value);
+		optionDOM.innerHTML = label;
+		optionDOM.setAttribute("value",value);
 		if(selectedValue){
 			if(o.value==selectedValue) optionDOM.setAttribute("selected","true");
 		}else if(i==0){
@@ -217,9 +228,6 @@ Improv.widgets.ACTIONS = function(obj,path,args){
 			var index = actionOptions.indexOf(actionOption);
 			if(index<0) throw "deleting an action that doesn't exist?!?!";
 			actionOptions.splice(index,1);
-
-			// Tell DOM to DIE
-			dom.die();
 
 			// Remove from this UI
 			list.removeChild(li);

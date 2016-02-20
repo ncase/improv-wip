@@ -7,9 +7,11 @@
 <body>
 
 <div id="editor">
-Do dis:
-{ACTIONS steps}
+Do the math:
+{ACTIONS math}
 </div>
+
+<hr>
 
 <div id="output"></div>
 
@@ -24,65 +26,68 @@ Do dis:
 <!-- Test -->
 <script>
 
-// LOGIC STEPS
 Improv.actions.set_num = {
-	reference: "number",
-	label: "Remember a number...",
-	editor: "Remember {TEXT ref} is {NUM value}",
-	act:function(workspace,o){
-		workspace[o.ref] = o.value;
+	label: "Create a number...",
+	editor: "The number of {VAR _set_: type=number,name=something} is {NUM value}",
+	act: function(obj,args){
+		Improv.setVar(obj, args._set_, args.value);
 	}
 };
 
-Improv.actions.do_math = {
-	reference: "number",
+Improv.actions.add_num = {
 	label: "Do math to two numbers...",
-	// later - do math to two numbers
-	// maybe MORE????? but how. "value[]" as a propname?
-	editor: "Remember {TEXT ref} is {NUM a} "+
-			"{CHOOSE op: +,-,×,÷} "+
-			"{NUM b}",
-	act:function(workspace,o){
+	editor: "The number of {VAR _set_: type=number,name=something} is {NUM a} {CHOOSE op: +,-,×,÷} {NUM b}",
+	act: function(obj,args){
 		var val;
-		switch(o.op){
-			case "+": val=o.a+o.b; break;
-			case "-": val=o.a-o.b; break;
-			case "×": val=o.a*o.b; break;
-			case "÷": val=o.a/o.b; break;
+		switch(args.op){
+			case "+": val=args.a+args.b; break;
+			case "-": val=args.a-args.b; break;
+			case "×": val=args.a*args.b; break;
+			case "÷": val=args.a/args.b; break;
 		}
-		workspace[o.ref] = val;
+		Improv.setVar(obj, args._set_, val);
 	}
 };
 
-Improv.actions.print_num = {
-	label: "Print number...",
+Improv.actions.print = {
+	label: "Print a number",
 	editor: "Print {NUM value}",
-	act:function(workspace,o){
-		output.innerHTML += o.value+"<br>";
+	act: function(obj,args){
+		output.innerHTML += "<br>" + args.value;
 	}
 };
 
-// Math steps
-var model = {
-	steps: [
-		{ type:"set_num", ref:"apples", value:2 },
-		/*{ type:"set_num", ref:"oranges", value:3 },
-		{ type:"do_math", ref:"fruits", op:"plus", a:{ref:"apples"}, b:{ref:"oranges"} },
-		{ type:"print_num", value:{ref:"fruits"} },*/
+var logic = {
+	_vars_:[
+		{ id:"AAA", type:"number", name:"apples" },
+		{ id:"BBB", type:"number", name:"oranges" },
+		{ id:"CCC", type:"number", name:"fruit" }
+	],
+	math:[
+		{ type:"set_num", _set_:"AAA", value:2 },
+		{ type:"set_num", _set_:"BBB", value:3 },
+		{ type:"add_num", _set_:"CCC", op:"+", a:{_get_:"AAA"}, b:{_get_:"BBB"} },
+		{ type:"print", value:{_get_:"CCC"} }
 	]
 };
 
-// Logic loop!
+// Loop!
 var workspace;
 var output = document.getElementById("output");
 setInterval(function(){
+
 	workspace = {};
 	output.innerHTML = "";
-	Improv.act(workspace, model.steps);
+	Improv.act(workspace, logic.math);
+
 },1000/30);
 
-// Improv, edit!
-Improv.root = model.steps; // HACK.
-Improv.edit(model,"#editor");
+// Start!
+Improv.edit(logic,"#editor");
+
+// Do a cars & CO2 example, why not.
+// It's Tangle so far.
+// Demos... YouTube 'em, Vimeo 'em???
+// Patreon post?
 
 </script>

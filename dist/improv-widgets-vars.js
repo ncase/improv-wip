@@ -7,6 +7,9 @@ var _getFreeformText = function(){
 	var text = document.createElement("input");
 	text.className = "improv_text";
 
+	// On Click
+	text.onclick = text.select;
+
 	// On Change
 	text.oninput = function(){
 
@@ -26,16 +29,51 @@ var _getFreeformText = function(){
 
 };
 
-// FREE FORM TEXT
-Improv.widgets.TEXT = function(obj,path,args){
+// CREATING A _SET_ VAR
+// {VAR _set_: type=number,name=something}
+Improv.widgets.VAR = function(obj,path,args){
 
-	// Initial value
-	var initialValue = Improv.getProperty(obj,path);
-
-	// Default...
-	if(!initialValue){
-		initialValue = "new variable";
+	// Args: min, max, [step=1], [default=null]
+	var argsObject = {};
+	for(var i=0;i<args.length;i++){
+		var keyvalue = args[i].split("=");
+		argsObject[keyvalue[0]] = keyvalue[1];
 	}
+	var type = argsObject.type;
+	var name = argsObject.name;
+
+	// What's the ID?!
+	var varID = Improv.getProperty(obj,path);
+
+	// If there is no ID, THEN IT'S TIME TO CREATE A NEW ONE!
+	if(!varID){
+
+		// Set locally
+		varID = Improv.generateUID();
+
+		// Set in logic model
+		Improv.root._vars_.push({
+			id: varID,
+			type: type,
+			name: name
+		});
+
+		// Set in action options
+		Improv.setProperty(obj,"_set_",varID);
+
+	}
+
+	// Getter & Setter for the NAME.
+	var getVarName = function(){
+		return Improv.getVarByID(Improv.root, varID).name;
+	};
+	var setVarName = function(value){
+		Improv.getVarByID(Improv.root, varID).name = value;
+	};
+
+	// Initial value, default
+	var initialValue = getVarName();
+	if(!initialValue) initialValue=name;
 
 	// Create input text
 	var text = _getFreeformText();
@@ -45,9 +83,22 @@ Improv.widgets.TEXT = function(obj,path,args){
 	var _changeStyle = text.oninput;
 	text.oninput = function(){
 		_changeStyle();
-		Improv.setProperty(obj,path,text.value);
+		setVarName(text.value);
 	};
 	text.oninput();
+
+	//////////////////////
+	// DIE ///////////////
+	//////////////////////
+
+	text.die = function(){
+		
+		// Delete in logic model
+		var _var_ = Improv.getVarByID(Improv.root, varID);
+		var index = Improv.root._vars_.indexOf(_var_);
+		Improv.root._vars_.splice(index,1);
+
+	};
 
 	// Return input
 	return text;
@@ -61,10 +112,10 @@ Improv.widgets.NUM = function(obj,path,args){
 	var container = document.createElement("span");
 	container.className = "improv_inline";
 
-	// Is This A Reference?
-	var isReference = function(){
+	// Is This A _GET_ Variable?
+	var _isVar = function(){
 		var value = Improv.getProperty(obj,path);
-		return (value && value.ref!==undefined);
+		return (value && value._get_!==undefined); // value exists, and it's a _get_!
 	};
 
 	//////////////////////
@@ -80,10 +131,10 @@ Improv.widgets.NUM = function(obj,path,args){
 	numberInput.oninput = function(){
 		_changeStyle();
 
-		// If number or reference...
+		// If number or _get_...
 		var value = parseFloat(numberInput.value);
 		if(isNaN(value)){
-			// reference
+			return; // that... that is NOT a number you just typed
 		}else{
 			Improv.setProperty(obj,path,value); // number
 		}
@@ -91,22 +142,43 @@ Improv.widgets.NUM = function(obj,path,args){
 	};
 
 	//////////////////////
-	// CHOOSE REF ////////
+	// CHOOSE _GET_ //////
 	//////////////////////
 
 	// Get options
-	var options = Improv.getReferences(Improv.root,"number");
+	var optionsRaw = Improv.getVarsByType(Improv.root,"number");
+	var options = [];
+	for(var i=0;i<optionsRaw.length;i++){
+		var o = optionsRaw[i];
+		options.push({
+			label: o.name,
+			value: o.id
+		});
+	}
 
 	// Create choose select	
-	var referenceInput = _createSelect(options);
-	container.appendChild(referenceInput);
+	var getterInput = _createSelect(options);
+	container.appendChild(getterInput);
 
 	// Set data when you make a selection
-	referenceInput.onchange = function(){
+	getterInput.onchange = function(){
 		Improv.setProperty(obj,path,{
-			ref: referenceInput.value
+			_get_: getterInput.value
 		});
 	};
+
+	// Thirty times a second, update options IF anything's changed.
+	var interval = setInterval(function(){
+		for(var i=0;i<getterInput.childNodes.length;i++){
+			var option = getterInput.childNodes[i];
+			var id = option.getAttribute("value");
+			var name = option.innerHTML;
+			var _var_ = Improv.getVarByID(Improv.root, id);
+			if(name != _var_.name){
+				option.innerHTML = _var_.name; // NAME CHANGED
+			}
+		}
+	},1000/30);
 
 	//////////////////////
 	// MORE (...) ////////
@@ -119,10 +191,10 @@ Improv.widgets.NUM = function(obj,path,args){
 	container.appendChild(more);
 	more.onclick = function(){
 		var value;
-		if(isReference()){
+		if(_isVar()){
 			value=0;
 		}else{
-			value={ref:""};
+			value={_get_:""};
 		}
 		Improv.setProperty(obj,path,value);
 		updateInterface();
@@ -134,26 +206,27 @@ Improv.widgets.NUM = function(obj,path,args){
 
 	var updateInterface = function(){
 
-		if(isReference()){
+		if(_isVar()){
 			
-			// IT'S A REFERENCE
+			// IT'S A _GET_ VAR
 
 			// Hide & show
 			numberInput.style.display = "none";
-			referenceInput.style.display = "inline-block";
+			getterInput.style.display = "inline-block";
 
 			// Initial or default value
-			var value = Improv.getProperty(obj,path);
-			if(!value || !value.ref) value={ref:""};
+			var getter = Improv.getProperty(obj,path);
+			if(!getter || !getter._get_) getter={_get_:""};
+			var varID = getter._get_;
 
 			// Set up the Reference Input
-			for(var i=0;i<referenceInput.childNodes.length;i++){
-				var option = referenceInput.childNodes[i];
-				if(option.value==value){
+			for(var i=0;i<getterInput.childNodes.length;i++){
+				var option = getterInput.childNodes[i];
+				if(option.value==varID){
 					option.setAttribute("selected","true");
 				}
 			}
-			referenceInput.onchange();
+			getterInput.onchange();
 
 		}else{
 
@@ -161,7 +234,7 @@ Improv.widgets.NUM = function(obj,path,args){
 
 			// Hide & show
 			numberInput.style.display = "inline-block";
-			referenceInput.style.display = "none";
+			getterInput.style.display = "none";
 
 			// Initial or default value
 			var value = Improv.getProperty(obj,path);
@@ -176,6 +249,14 @@ Improv.widgets.NUM = function(obj,path,args){
 	};	
 
 	updateInterface();
+
+	//////////////////////
+	// DIE ///////////////
+	//////////////////////
+
+	container.die = function(){
+		clearInterval(interval);
+	};
 
 	// Return input
 	return container;

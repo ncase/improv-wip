@@ -19,11 +19,7 @@ html = you can pass html code directly,
 Returns a new created DOM, or the DOM you passed.
 
 ************/
-Improv.root = null;
 Improv.edit = function(object,html){
-
-	// ROOT!
-	Improv.root = Improv.root || object;
 
 	// Get the html content
 	var dom;
@@ -57,7 +53,6 @@ Improv.edit = function(object,html){
 
 	// For every even (0,2,4...) element, it's just a span.
 	// For every odd (1,3,5...) element, it's a Widget to edit the OBJECT
-	dom.widgets = []; // hack?
 	for(var i=0;i<split.length;i++){
 		
 		// Config for a new node...
@@ -71,20 +66,11 @@ Improv.edit = function(object,html){
 		}else{
 			// ODD - it's a Widget to edit the OBJECT
 			node = Improv.makeWidget(object,config);
-			dom.widgets.push(node);
 		}
 
 		// Append that shtuff
 		dom.appendChild(node);
 
-	}
-
-	// Hack? DIE:
-	dom.die = function(){
-		for(var i=0;i<dom.widgets.length;i++){
-			var widget = dom.widgets[i];
-			if(widget.die) widget.die();
-		}
 	}
 
 	// Return old/new DOM
@@ -130,13 +116,6 @@ Improv.makeWidget = function(object, config){
 		args = split[2];
 	}
 
-	// Then, split THOSE args up by "," or ", "
-	if(args){
-		args = args.split(/,\s|,/); // to allow for "a,b,c" and "a, b, c"
-	}else{
-		args = [];
-	}
-
 	// Get the widget-making function
 	var widgetFunc = Improv.widgets[widgetType];
 
@@ -169,20 +148,15 @@ Improv.act = function(object,actionOptions){
 
 		// Got the "act" func
 		var actionOption = actionOptions[i];
-		actionOption = JSON.parse(JSON.stringify(actionOption)); // clone
 		var action = Improv.getActionByID(actionOption.type);
 		var act = action.act;
 
-		// _VARS_
-		// If it's a _get_, change it whatever
+		// References
+		actionOption = JSON.parse(JSON.stringify(actionOption));
 		for(var propName in actionOption){
 			var prop = actionOption[propName];
-			if(prop._get_){
-				
-				// Get it from the runtime object
-				var value = object[prop._get_];
-				actionOption[propName] = value;
-
+			if(prop.get){
+				actionOption[propName] = Improv.getProperty(object,prop.get);
 			}
 		}
 
@@ -296,72 +270,43 @@ Improv.unlisten = function(handler){
 
 /************
 
-Improv.setVar(obj, _var_, value);
-  obj: is the runtime target object
-_var_: the _var_ id
-value: the new value, obviously~
+Improv.getVarSetters(object,group);
+Improv.getVarGetters(object,group);
 
 ************/
 
-Improv.setVar = function(obj, _var_, value){
-	obj[_var_] = value;
-};
+Improv.getVarSetters = function(actionOptions,group){
 
-/************
+	// TO DO: Crawl through Improv.root, not just actions array
 
-Improv.getVarsByType(model, type);
-model: the logic model
- type: the type	of var it is
+	// List of refs.
+	var refs = [];
 
-Looks through the _vars_ array,
-and returns only the vars (id AND name)
-of those that match the type
+	// Go through each action.
+	for(var i=0;i<actionOptions.length;i++){
+		var actionOption = actionOptions[i];
+		var action = Improv.getActionByID(actionOption.type);
 
-************/
+		// If this sets a reference of the right group...
+		if(action.reference==group){
+			var uniqueValue = actionOption.set;
+			if(refs.indexOf(uniqueValue)<0){
+				refs.push(uniqueValue);
+			}			
+		}
 
-Improv.getVarsByType = function(model, type){
-	var _vars_ = model._vars_;
-	return _vars_.filter(function(_var_){
-		return(_var_.type==type);
-	});
-};
-
-/************
-
-Improv.getVarByID(model, id);
-model: the logic model
- type: the var ID
-
-************/
-
-Improv.getVarByID = function(model, id){
-	var _vars_ = model._vars_;
-	for(var i=0;i<_vars_.length;i++){
-		var _var_ = _vars_[i];
-		if(_var_.id==id) return _var_;
 	}
-	return null;
+
+	// Return list of names
+	return refs;
+
 };
 
+Improv.getVarGetters = function(actionOptions,varName){
 
-/************
+	// TO DO: Crawl through Improv.root, not just actions array
 
-Improv.generateUID();
-Create a random 7-letter string
-52^7 = 1,028,071,702,528 = ONE TRILLION
-The chance of an UID collision?
-Basically zero.
-
-************/
-
-Improv.generateUID = function(){
-	var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    for(var i=0; i<7; i++){
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-};
+}
 
 
 })(window);
