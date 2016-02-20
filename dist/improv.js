@@ -245,10 +245,7 @@ Improv.setProperty = function(obj,path,value){
 		var subPath = pathSplit.slice(0,i).join(".");
 
 		// If there's a listener, call it with the new value
-		var callback = Improv._getListenerCallback(originalObject,subPath);
-		if(callback){
-			callback(value);
-		}
+		Improv.message(originalObject, subPath, value);
 
 	}
 
@@ -256,14 +253,17 @@ Improv.setProperty = function(obj,path,value){
 
 Improv._listeners = [];
 
-Improv._getListenerCallback = function(obj,path){
-	for(var i=0;i<Improv._listeners.length;i++){
-		var listener = Improv._listeners[i];
-		if(listener.obj==obj && listener.path==path){
-			return listener.callback;
-		}
+Improv.getListeners = function(obj,path){
+	return Improv._listeners.filter(function(listener){
+		return (listener.obj==obj && listener.path==path);
+	});
+};
+
+Improv.message = function(obj, path, value){
+	var listeners = Improv.getListeners(obj, path);
+	for(var i=0;i<listeners.length;i++){
+		listeners[i].callback(value);
 	}
-	return null;
 };
 
 Improv.listen = function(obj, path, callback){

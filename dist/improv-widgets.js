@@ -138,10 +138,29 @@ Improv.widgets.CHOOSE = function(obj,path,args){
 	return selectDOM;
 
 };
-var _createSelect = function(options, selectedValue){
+var _createSelect = function(selectDOM, options, selectedValue){
+
+	// If one arg, it's just options
+	if(arguments.length==1){
+		options = arguments[0];
+		selectDOM = null;
+		selectedValue = null;
+	}
+
+	// If two args, it's either selectDOM+options or options+selectedValue
+	if(arguments.length==2){
+		if(Array.isArray(arguments[0])){
+			selectedValue = arguments[1];
+			options = arguments[0];
+			selectDOM = null;
+		}else{
+			selectedValue = null; // mostly fine
+		}
+	}
 
 	// Create <select> dom
-	var selectDOM = document.createElement("select");
+	selectDOM = selectDOM || document.createElement("select");
+	selectDOM.innerHTML = "";
 	for(var i=0;i<options.length;i++){
 
 		var o = options[i];

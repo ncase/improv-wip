@@ -69,6 +69,7 @@ Improv.widgets.VAR = function(obj,path,args){
 	};
 	var setVarName = function(value){
 		Improv.getVarByID(Improv.root, varID).name = value;
+		Improv.message(Improv.root, "_vars_", value);
 	};
 
 	// Initial value, default
@@ -97,6 +98,12 @@ Improv.widgets.VAR = function(obj,path,args){
 		var _var_ = Improv.getVarByID(Improv.root, varID);
 		var index = Improv.root._vars_.indexOf(_var_);
 		Improv.root._vars_.splice(index,1);
+
+		// HACK TODO - later, when you can make this var just set a previous one,
+		// NOT creating a new one????
+
+		// Tell peeps it's gone now
+		Improv.message(Improv.root, "_vars_");
 
 	};
 
@@ -146,18 +153,21 @@ Improv.widgets.NUM = function(obj,path,args){
 	//////////////////////
 
 	// Get options
-	var optionsRaw = Improv.getVarsByType(Improv.root,"number");
-	var options = [];
-	for(var i=0;i<optionsRaw.length;i++){
-		var o = optionsRaw[i];
-		options.push({
-			label: o.name,
-			value: o.id
-		});
-	}
+	var _getOptions = function(){
+		var optionsRaw = Improv.getVarsByType(Improv.root,"number");
+		var options = [];
+		for(var i=0;i<optionsRaw.length;i++){
+			var o = optionsRaw[i];
+			options.push({
+				label: o.name,
+				value: o.id
+			});
+		}
+		return options;
+	};
 
 	// Create choose select	
-	var getterInput = _createSelect(options);
+	var getterInput = _createSelect(_getOptions());
 	container.appendChild(getterInput);
 
 	// Set data when you make a selection
@@ -168,17 +178,19 @@ Improv.widgets.NUM = function(obj,path,args){
 	};
 
 	// Thirty times a second, update options IF anything's changed.
-	var interval = setInterval(function(){
-		for(var i=0;i<getterInput.childNodes.length;i++){
-			var option = getterInput.childNodes[i];
-			var id = option.getAttribute("value");
-			var name = option.innerHTML;
-			var _var_ = Improv.getVarByID(Improv.root, id);
-			if(name != _var_.name){
-				option.innerHTML = _var_.name; // NAME CHANGED
-			}
-		}
-	},1000/30);
+	// Listen to changes
+	var listener = Improv.listen(Improv.root, "_vars_", function(value){
+
+		// Current value
+		var currentValue = getterInput.value;
+
+		// Rebuild list
+		_createSelect(getterInput, _getOptions(), currentValue);
+
+		// Update Interface
+		updateInterface();
+
+	});
 
 	//////////////////////
 	// MORE (...) ////////
@@ -209,6 +221,13 @@ Improv.widgets.NUM = function(obj,path,args){
 		if(_isVar()){
 			
 			// IT'S A _GET_ VAR
+
+			// IF THERE'S NO OPTIONS, FORCE-SWITCH TO NUMBER
+			if(_getOptions().length==0){
+				Improv.setProperty(obj,path,0);
+				updateInterface();
+				return;
+			}
 
 			// Hide & show
 			numberInput.style.display = "none";
@@ -255,7 +274,7 @@ Improv.widgets.NUM = function(obj,path,args){
 	//////////////////////
 
 	container.die = function(){
-		clearInterval(interval);
+		Improv.unlisten(listener);
 	};
 
 	// Return input
