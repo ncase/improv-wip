@@ -1,22 +1,27 @@
 <!doctype>
 <html>
 <head>
-	<title>variables!</title>
+	<title>nonlinear!</title>
 	<link rel="stylesheet" type="text/css" href="../../dist/improv-default.css">
+	<link rel="stylesheet" type="text/css" href="nonlinear.css">
 </head>
 <body>
 
-<div id="editor">
-Let's start off with these numbers:
-{ACTIONS math}
+<div id="sidebar">
 
-<br><br>
-Then every cycle, do this:
+	<div id="editor">
+	Let's start off with these numbers:
+	{ACTIONS start}
+
+	<br>
+	Then for each of {NUMBER cycles: min=1,max=1000} cycles, do this:
+	{ACTIONS cycle}
+	</div>
+
 </div>
-
-<hr>
-
-<div id="output"></div>
+<div id="model_container">
+	<svg id="model"></svg>
+</div>
 
 </body>
 </html>
@@ -26,71 +31,39 @@ Then every cycle, do this:
 <script src="../../dist/improv-widgets.js"></script>
 <script src="../../dist/improv-widgets-vars.js"></script>
 
+<!-- Nonlinear Scripts -->
+<script src="snap.svg-min.js"></script>
+<script src="nonlinear.js"></script>
+<script src="nonlinear-improv.js"></script>
+
 <!-- Test -->
 <script>
 
-Improv.actions.set_num = {
-	label: "Create a number...",
-	editor: "The number of {VAR _set_: type=number,name=something} is {NUM value}",
-	act: function(obj,args){
-		Improv.setVar(obj, args._set_, args.value);
-	}
-};
-
-Improv.actions.add_num = {
-	label: "Do math to two numbers...",
-	editor: "The number of {VAR _set_: type=number,name=something} is {NUM a} {CHOOSE op: +,-,×,÷} {NUM b}",
-	act: function(obj,args){
-		var val;
-		switch(args.op){
-			case "+": val=args.a+args.b; break;
-			case "-": val=args.a-args.b; break;
-			case "×": val=args.a*args.b; break;
-			case "÷": val=args.a/args.b; break;
-		}
-		Improv.setVar(obj, args._set_, val);
-	}
-};
-
-Improv.actions.print = {
-	label: "Print a number",
-	editor: "Print {NUM value}",
-	act: function(obj,args){
-		output.innerHTML += "<br>" + args.value;
-	}
-};
-
-var logic = {
+INIT({
 	_vars_:[
-		{ id:"AAA", type:"number", name:"apples" },
-		{ id:"BBB", type:"number", name:"oranges" },
-		{ id:"CCC", type:"number", name:"fruit" }
+		{ id:"AAA", type:"number", name:"rabbits" },
+		{ id:"BBB", type:"number", name:"wolves" },
+		{ id:"CCC", type:"number", name:"encounters" },
+		{ id:"DDD", type:"number", name:"rabbits eaten" },
+		{ id:"EEE", type:"number", name:"wolf growth" },
 	],
-	math:[
-		{ type:"set_num", _set_:"AAA", value:2 },
-		{ type:"set_num", _set_:"BBB", value:3 },
-		{ type:"add_num", _set_:"CCC", op:"+", a:{_get_:"AAA"}, b:{_get_:"BBB"} },
-		{ type:"print", value:{_get_:"CCC"} }
+	start:[
+		{ type:"set_num", _set_:"AAA", value:100 },
+		{ type:"set_num", _set_:"BBB", value:50 },
+	],
+	cycles: 500, // graph over this many cycles
+	cycle:[
+		{ type:"mod_num", _set_:{_ref_:"AAA"}, op:"×", value:1.05 }, // rabbits multiply
+		{ type:"mod_num", _set_:{_ref_:"BBB"}, op:"×", value:0.95 }, // wolves decay
+
+		{ type:"do_math", _set_:"CCC", op:"×", a:{_get_:"AAA"}, b:{_get_:"BBB"} },
+		{ type:"do_math", _set_:"DDD", op:"×", a:0.001, b:{_get_:"CCC"} },
+		{ type:"do_math", _set_:"EEE", op:"×", a:1, b:{_get_:"DDD"} },
+
+		{ type:"mod_num", _set_:{_ref_:"AAA"}, op:"-", value:{_get_:"DDD"} }, // rabbits get eaten
+		{ type:"mod_num", _set_:{_ref_:"BBB"}, op:"+", value:{_get_:"EEE"} } // wolves grow
+
 	]
-};
-
-// Loop!
-var workspace;
-var output = document.getElementById("output");
-setInterval(function(){
-
-	workspace = {};
-	output.innerHTML = "";
-	Improv.act(workspace, logic.math);
-
-},1000/30);
-
-// Start!
-Improv.edit(logic,"#editor");
-
-// Do a cars & CO2 example, why not.
-// It's Tangle so far.
-// Demos... YouTube 'em, Vimeo 'em???
-// Patreon post?
+});
 
 </script>

@@ -1,0 +1,29 @@
+body{
+	margin:0;
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: 100;
+	font-size: 18px;
+	line-height: 1.4em;
+}
+#model_container{
+	position: fixed;
+	width: calc(100% - 500px);
+	height: 100%;
+	top:0; right: 0;
+}
+#model{
+	width:500px; height:500px;
+	position: absolute;
+	margin: auto;
+	top:0; right:0; left:0; bottom:0;
+	border-left: 2px solid #333;
+	border-bottom: 2px solid #333;
+}
+#sidebar{
+	position:absolute; 
+	top:0; left:0;
+	width:450px;
+	min-height: calc(100% - 50px);
+	padding: 25px;
+	border-right: 1px solid #ccc;
+}
