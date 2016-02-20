@@ -23,7 +23,7 @@ Improv.actions.do_math = {
 
 Improv.actions.mod_num = {
 	label: "Modify a number...",
-	editor: "{CHOOSE op: +=Add to,-=Subtract,×=Multiple,÷=Divide} {VAR _set_: type=number,name=something} by {NUM value}",
+	editor: "{CHOOSE op: +=Add to,-=Subtract,×=Multiply,÷=Divide} {VAR _set_: type=number,name=something} by {NUM value}",
 	act: function(obj,args){
 		var currentValue = Improv.getProperty(obj,args._set_);
 		var modifier = args.value;

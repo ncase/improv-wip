@@ -48,16 +48,16 @@ INIT({
 		{ id:"EEE", type:"number", name:"wolf growth" },
 	],
 	start:[
-		{ type:"set_num", _set_:"AAA", value:100 },
+		{ type:"set_num", _set_:"AAA", value:1000 },
 		{ type:"set_num", _set_:"BBB", value:50 },
 	],
 	cycles: 500, // graph over this many cycles
 	cycle:[
-		{ type:"mod_num", _set_:{_ref_:"AAA"}, op:"×", value:1.05 }, // rabbits multiply
-		{ type:"mod_num", _set_:{_ref_:"BBB"}, op:"×", value:0.95 }, // wolves decay
+		{ type:"mod_num", _set_:{_ref_:"AAA"}, op:"×", value:1.02 }, // rabbits multiply
+		{ type:"mod_num", _set_:{_ref_:"BBB"}, op:"×", value:0.93 }, // wolves decay
 
 		{ type:"do_math", _set_:"CCC", op:"×", a:{_get_:"AAA"}, b:{_get_:"BBB"} },
-		{ type:"do_math", _set_:"DDD", op:"×", a:0.001, b:{_get_:"CCC"} },
+		{ type:"do_math", _set_:"DDD", op:"×", a:0.0001, b:{_get_:"CCC"} },
 		{ type:"do_math", _set_:"EEE", op:"×", a:1, b:{_get_:"DDD"} },
 
 		{ type:"mod_num", _set_:{_ref_:"AAA"}, op:"-", value:{_get_:"DDD"} }, // rabbits get eaten
